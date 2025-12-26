@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'screens/home_screen.dart';
 import 'screens/plan_screen.dart';
@@ -6,7 +7,7 @@ import 'screens/checkin_screen.dart';
 import 'screens/trends_screen.dart';
 
 void main() {
-  runApp(const PrimeFormApp());
+  runApp(const ProviderScope(child: PrimeFormApp()));
 }
 
 class PrimeFormApp extends StatelessWidget {
@@ -23,10 +24,10 @@ class PrimeFormApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (_) => const HomeScreen(),
-        '/plan': (_) => const PlanScreen(),
-        '/checkin': (_) => const CheckInScreen(),
-        '/trends': (_) => const TrendsScreen(),
+        '/': (context) => const HomeScreen(),
+        '/plan': (context) => const PlanScreen(),
+        '/checkin': (context) => const CheckInScreen(),
+        '/trends': (context) => const TrendsScreen(),
       },
     );
   }

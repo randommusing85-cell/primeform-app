@@ -1,4 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';import 'package:flutter/material.dart';
+
+import 'package:primeform_app/repos/prime_repo.dart';
+import 'package:primeform_app/models/checkin.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -38,6 +41,9 @@ class HomeScreen extends StatelessWidget {
               onPressed: () => Navigator.pushNamed(context, '/trends'),
               child: const Text('Trends'),
             ),
+
+            const Spacer(),
+            
           ],
         ),
       ),

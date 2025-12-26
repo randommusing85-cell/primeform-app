@@ -43,3 +43,21 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+
+# VS / VS Code
+.vs/
+.vscode/
+*.sln
+*.vcxproj*
+*.vc.db
+*.vc.db-shm
+*.vc.db-wal
+*.vsidx
+
+# Flutter / Dart
+.build/
+.flutter-plugins
+
+# Isar
+isar/
