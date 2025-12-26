@@ -1,8 +1,8 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:primeform_app/models/checkin.dart';
-import 'package:primeform_app/state/providers.dart';
+import '../models/checkin.dart';
+import '../state/providers.dart';
 
 class CheckInScreen extends ConsumerStatefulWidget {
   const CheckInScreen({super.key});
@@ -30,44 +30,36 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
     super.dispose();
   }
 
-  double? _parseDouble(String s) => double.tryParse(s.trim());
-  int? _parseInt(String s) => int.tryParse(s.trim());
+  num? _tryNum(String s) => num.tryParse(s.trim());
 
   Future<void> _save() async {
-    if (_saving) return;
-
-    final ok = _formKey.currentState?.validate() ?? false;
-    if (!ok) return;
+    if (!_formKey.currentState!.validate()) return;
 
     setState(() => _saving = true);
 
     try {
-      final weight = _parseDouble(_weightCtrl.text)!;
-      final waist = _parseDouble(_waistCtrl.text)!;
-      final steps = _parseInt(_stepsCtrl.text)!;
-      final note = _noteCtrl.text.trim().isEmpty ? null : _noteCtrl.text.trim();
-
       final c = CheckIn()
         ..ts = DateTime.now()
-        ..weightKg = weight
-        ..waistCm = waist
-        ..stepsToday = steps
-        ..note = note;
+        ..weightKg = (_tryNum(_weightCtrl.text) ?? 0).toDouble()
+        ..waistCm = (_tryNum(_waistCtrl.text) ?? 0).toDouble()
+        ..stepsToday = int.parse(_stepsCtrl.text.trim())
+        ..note = _noteCtrl.text.trim().isEmpty ? null : _noteCtrl.text.trim();
 
       final repo = ref.read(primeRepoProvider);
       await repo.addCheckIn(c);
 
-      // Usually not necessary since Trends uses a stream, but it's a safe belt.
+      // refresh stream consumers
       ref.invalidate(latestCheckInsStreamProvider);
 
       if (!mounted) return;
-
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Check-in saved')),
+        const SnackBar(content: Text('Check-in saved ✅')),
       );
 
-      // Optional: jump to Trends after saving
-      Navigator.pushNamed(context, '/trends');
+      _weightCtrl.clear();
+      _waistCtrl.clear();
+      _stepsCtrl.clear();
+      _noteCtrl.clear();
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -80,6 +72,8 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(title: const Text('Daily Check-in')),
       body: Padding(
@@ -88,6 +82,9 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
           key: _formKey,
           child: ListView(
             children: [
+              Text('Log today', style: theme.textTheme.headlineSmall),
+              const SizedBox(height: 16),
+
               TextFormField(
                 controller: _weightCtrl,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -96,9 +93,9 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
                   hintText: 'e.g. 75.2',
                 ),
                 validator: (v) {
-                  final x = _parseDouble(v ?? '');
-                  if (x == null) return 'Enter a number';
-                  if (x < 20 || x > 300) return 'Enter a realistic weight';
+                  final n = _tryNum(v ?? '');
+                  if (n == null) return 'Enter a number';
+                  if (n < 30 || n > 250) return 'Enter a realistic weight';
                   return null;
                 },
               ),
@@ -109,12 +106,12 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 decoration: const InputDecoration(
                   labelText: 'Waist (cm)',
-                  hintText: 'e.g. 80.0',
+                  hintText: 'e.g. 80',
                 ),
                 validator: (v) {
-                  final x = _parseDouble(v ?? '');
-                  if (x == null) return 'Enter a number';
-                  if (x < 30 || x > 200) return 'Enter a realistic waist';
+                  final n = _tryNum(v ?? '');
+                  if (n == null) return 'Enter a number';
+                  if (n < 40 || n > 200) return 'Enter a realistic waist';
                   return null;
                 },
               ),
@@ -125,12 +122,12 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   labelText: 'Steps today',
-                  hintText: 'e.g. 6500',
+                  hintText: 'e.g. 8000',
                 ),
                 validator: (v) {
-                  final x = _parseInt(v ?? '');
-                  if (x == null) return 'Enter a whole number';
-                  if (x < 0 || x > 100000) return 'Enter a realistic step count';
+                  final n = int.tryParse((v ?? '').trim());
+                  if (n == null) return 'Enter a whole number';
+                  if (n < 0 || n > 100000) return 'Enter a realistic step count';
                   return null;
                 },
               ),
@@ -138,12 +135,13 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
 
               TextFormField(
                 controller: _noteCtrl,
+                maxLines: 3,
                 decoration: const InputDecoration(
                   labelText: 'Note (optional)',
-                  hintText: 'Sleep, stress, training, anything…',
+                  hintText: 'Energy, hunger, mood, training…',
                 ),
-                maxLines: 3,
               ),
+
               const SizedBox(height: 20),
 
               FilledButton(
