@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
@@ -99,17 +99,17 @@ class _PlanScreenState extends ConsumerState<PlanScreen> {
       ..calories = n(pj["calories"], 2000).round()
       ..proteinG = n(macros["protein_g"], 160).round()
       ..carbsG = n(macros["carbs_g"], 200).round()
-      ..fatG = n(macros["fat_g"], 60).round();
-
+      ..fatG = n(macros["fat_g"], 60).round()
+      ..stepTarget = n(pj["step_target"], 8000).round();
 
     final repo = ref.read(primeRepoProvider);
     await repo.upsertPlan(plan);
     ref.invalidate(activePlanProvider);
 
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Plan saved ✅')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Plan saved ✅')));
   }
 
   @override
@@ -122,7 +122,10 @@ class _PlanScreenState extends ConsumerState<PlanScreen> {
         padding: const EdgeInsets.all(16),
         child: ListView(
           children: [
-            Text('Generate a plan with AI', style: theme.textTheme.headlineSmall),
+            Text(
+              'Generate a plan with AI',
+              style: theme.textTheme.headlineSmall,
+            ),
             const SizedBox(height: 12),
 
             Form(
@@ -147,8 +150,9 @@ class _PlanScreenState extends ConsumerState<PlanScreen> {
                   const SizedBox(height: 12),
                   TextFormField(
                     controller: _weightCtrl,
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
                     decoration: const InputDecoration(labelText: 'Weight (kg)'),
                     validator: (v) =>
                         (v == null || v.trim().isEmpty) ? 'Required' : null,
@@ -156,7 +160,7 @@ class _PlanScreenState extends ConsumerState<PlanScreen> {
                   const SizedBox(height: 12),
 
                   DropdownButtonFormField<String>(
-                    value: _goal,
+                    initialValue: _goal,
                     decoration: const InputDecoration(labelText: 'Goal'),
                     items: const [
                       DropdownMenuItem(value: 'cut', child: Text('Cut')),
@@ -168,9 +172,10 @@ class _PlanScreenState extends ConsumerState<PlanScreen> {
                   const SizedBox(height: 12),
 
                   DropdownButtonFormField<int>(
-                    value: _daysPerWeek,
-                    decoration:
-                        const InputDecoration(labelText: 'Training days / week'),
+                    initialValue: _daysPerWeek,
+                    decoration: const InputDecoration(
+                      labelText: 'Training days / week',
+                    ),
                     items: const [
                       DropdownMenuItem(value: 3, child: Text('3')),
                       DropdownMenuItem(value: 4, child: Text('4')),
@@ -208,7 +213,9 @@ class _PlanScreenState extends ConsumerState<PlanScreen> {
                   border: Border.all(color: theme.colorScheme.outlineVariant),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Text(const JsonEncoder.withIndent('  ').convert(_planJson)),
+                child: Text(
+                  const JsonEncoder.withIndent('  ').convert(_planJson),
+                ),
               ),
               const SizedBox(height: 12),
               FilledButton.tonal(

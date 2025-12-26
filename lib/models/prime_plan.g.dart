@@ -17,41 +17,30 @@ const PrimePlanSchema = CollectionSchema(
   name: r'PrimePlan',
   id: 566556248262072501,
   properties: {
-    r'calories': PropertySchema(
-      id: 0,
-      name: r'calories',
-      type: IsarType.long,
-    ),
-    r'carbsG': PropertySchema(
-      id: 1,
-      name: r'carbsG',
-      type: IsarType.long,
-    ),
+    r'calories': PropertySchema(id: 0, name: r'calories', type: IsarType.long),
+    r'carbsG': PropertySchema(id: 1, name: r'carbsG', type: IsarType.long),
     r'createdAt': PropertySchema(
       id: 2,
       name: r'createdAt',
       type: IsarType.dateTime,
     ),
-    r'fatG': PropertySchema(
-      id: 3,
-      name: r'fatG',
-      type: IsarType.long,
-    ),
+    r'fatG': PropertySchema(id: 3, name: r'fatG', type: IsarType.long),
     r'planName': PropertySchema(
       id: 4,
       name: r'planName',
       type: IsarType.string,
     ),
-    r'proteinG': PropertySchema(
-      id: 5,
-      name: r'proteinG',
+    r'proteinG': PropertySchema(id: 5, name: r'proteinG', type: IsarType.long),
+    r'stepTarget': PropertySchema(
+      id: 6,
+      name: r'stepTarget',
       type: IsarType.long,
     ),
     r'trainingDays': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'trainingDays',
       type: IsarType.long,
-    )
+    ),
   },
   estimateSize: _primePlanEstimateSize,
   serialize: _primePlanSerialize,
@@ -89,7 +78,8 @@ void _primePlanSerialize(
   writer.writeLong(offsets[3], object.fatG);
   writer.writeString(offsets[4], object.planName);
   writer.writeLong(offsets[5], object.proteinG);
-  writer.writeLong(offsets[6], object.trainingDays);
+  writer.writeLong(offsets[6], object.stepTarget);
+  writer.writeLong(offsets[7], object.trainingDays);
 }
 
 PrimePlan _primePlanDeserialize(
@@ -106,7 +96,8 @@ PrimePlan _primePlanDeserialize(
   object.id = id;
   object.planName = reader.readString(offsets[4]);
   object.proteinG = reader.readLong(offsets[5]);
-  object.trainingDays = reader.readLong(offsets[6]);
+  object.stepTarget = reader.readLong(offsets[6]);
+  object.trainingDays = reader.readLong(offsets[7]);
   return object;
 }
 
@@ -130,6 +121,8 @@ P _primePlanDeserializeProp<P>(
     case 5:
       return (reader.readLong(offset)) as P;
     case 6:
+      return (reader.readLong(offset)) as P;
+    case 7:
       return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -161,10 +154,7 @@ extension PrimePlanQueryWhere
     on QueryBuilder<PrimePlan, PrimePlan, QWhereClause> {
   QueryBuilder<PrimePlan, PrimePlan, QAfterWhereClause> idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: id,
-        upper: id,
-      ));
+      return query.addWhereClause(IdWhereClause.between(lower: id, upper: id));
     });
   }
 
@@ -190,8 +180,10 @@ extension PrimePlanQueryWhere
     });
   }
 
-  QueryBuilder<PrimePlan, PrimePlan, QAfterWhereClause> idGreaterThan(Id id,
-      {bool include = false}) {
+  QueryBuilder<PrimePlan, PrimePlan, QAfterWhereClause> idGreaterThan(
+    Id id, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -199,8 +191,10 @@ extension PrimePlanQueryWhere
     });
   }
 
-  QueryBuilder<PrimePlan, PrimePlan, QAfterWhereClause> idLessThan(Id id,
-      {bool include = false}) {
+  QueryBuilder<PrimePlan, PrimePlan, QAfterWhereClause> idLessThan(
+    Id id, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -215,12 +209,14 @@ extension PrimePlanQueryWhere
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: lowerId,
-        includeLower: includeLower,
-        upper: upperId,
-        includeUpper: includeUpper,
-      ));
+      return query.addWhereClause(
+        IdWhereClause.between(
+          lower: lowerId,
+          includeLower: includeLower,
+          upper: upperId,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 }
@@ -228,12 +224,12 @@ extension PrimePlanQueryWhere
 extension PrimePlanQueryFilter
     on QueryBuilder<PrimePlan, PrimePlan, QFilterCondition> {
   QueryBuilder<PrimePlan, PrimePlan, QAfterFilterCondition> caloriesEqualTo(
-      int value) {
+    int value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'calories',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'calories', value: value),
+      );
     });
   }
 
@@ -242,11 +238,13 @@ extension PrimePlanQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'calories',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'calories',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -255,11 +253,13 @@ extension PrimePlanQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'calories',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'calories',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -270,23 +270,25 @@ extension PrimePlanQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'calories',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'calories',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<PrimePlan, PrimePlan, QAfterFilterCondition> carbsGEqualTo(
-      int value) {
+    int value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'carbsG',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'carbsG', value: value),
+      );
     });
   }
 
@@ -295,11 +297,13 @@ extension PrimePlanQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'carbsG',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'carbsG',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -308,11 +312,13 @@ extension PrimePlanQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'carbsG',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'carbsG',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -323,37 +329,38 @@ extension PrimePlanQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'carbsG',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'carbsG',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<PrimePlan, PrimePlan, QAfterFilterCondition> createdAtEqualTo(
-      DateTime value) {
+    DateTime value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'createdAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'createdAt', value: value),
+      );
     });
   }
 
   QueryBuilder<PrimePlan, PrimePlan, QAfterFilterCondition>
-      createdAtGreaterThan(
-    DateTime value, {
-    bool include = false,
-  }) {
+  createdAtGreaterThan(DateTime value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'createdAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'createdAt',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -362,11 +369,13 @@ extension PrimePlanQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'createdAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'createdAt',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -377,23 +386,25 @@ extension PrimePlanQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'createdAt',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'createdAt',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<PrimePlan, PrimePlan, QAfterFilterCondition> fatGEqualTo(
-      int value) {
+    int value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'fatG',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'fatG', value: value),
+      );
     });
   }
 
@@ -402,11 +413,13 @@ extension PrimePlanQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'fatG',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'fatG',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -415,11 +428,13 @@ extension PrimePlanQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'fatG',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'fatG',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -430,23 +445,25 @@ extension PrimePlanQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'fatG',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'fatG',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<PrimePlan, PrimePlan, QAfterFilterCondition> idEqualTo(
-      Id value) {
+    Id value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'id', value: value),
+      );
     });
   }
 
@@ -455,11 +472,13 @@ extension PrimePlanQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -468,11 +487,13 @@ extension PrimePlanQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -483,13 +504,15 @@ extension PrimePlanQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'id',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'id',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
@@ -498,11 +521,13 @@ extension PrimePlanQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'planName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'planName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -512,12 +537,14 @@ extension PrimePlanQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'planName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'planName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -527,12 +554,14 @@ extension PrimePlanQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'planName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'planName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -544,14 +573,16 @@ extension PrimePlanQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'planName',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'planName',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -560,11 +591,13 @@ extension PrimePlanQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'planName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'planName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -573,64 +606,70 @@ extension PrimePlanQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'planName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'planName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<PrimePlan, PrimePlan, QAfterFilterCondition> planNameContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'planName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'planName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<PrimePlan, PrimePlan, QAfterFilterCondition> planNameMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'planName',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'planName',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<PrimePlan, PrimePlan, QAfterFilterCondition> planNameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'planName',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'planName', value: ''),
+      );
     });
   }
 
   QueryBuilder<PrimePlan, PrimePlan, QAfterFilterCondition>
-      planNameIsNotEmpty() {
+  planNameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'planName',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'planName', value: ''),
+      );
     });
   }
 
   QueryBuilder<PrimePlan, PrimePlan, QAfterFilterCondition> proteinGEqualTo(
-      int value) {
+    int value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'proteinG',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'proteinG', value: value),
+      );
     });
   }
 
@@ -639,11 +678,13 @@ extension PrimePlanQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'proteinG',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'proteinG',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -652,11 +693,13 @@ extension PrimePlanQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'proteinG',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'proteinG',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -667,51 +710,108 @@ extension PrimePlanQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'proteinG',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'proteinG',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PrimePlan, PrimePlan, QAfterFilterCondition> stepTargetEqualTo(
+    int value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'stepTarget', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<PrimePlan, PrimePlan, QAfterFilterCondition>
+  stepTargetGreaterThan(int value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'stepTarget',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PrimePlan, PrimePlan, QAfterFilterCondition> stepTargetLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'stepTarget',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PrimePlan, PrimePlan, QAfterFilterCondition> stepTargetBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'stepTarget',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<PrimePlan, PrimePlan, QAfterFilterCondition> trainingDaysEqualTo(
-      int value) {
+    int value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'trainingDays',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'trainingDays', value: value),
+      );
     });
   }
 
   QueryBuilder<PrimePlan, PrimePlan, QAfterFilterCondition>
-      trainingDaysGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
+  trainingDaysGreaterThan(int value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'trainingDays',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'trainingDays',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<PrimePlan, PrimePlan, QAfterFilterCondition>
-      trainingDaysLessThan(
-    int value, {
-    bool include = false,
-  }) {
+  trainingDaysLessThan(int value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'trainingDays',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'trainingDays',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -722,13 +822,15 @@ extension PrimePlanQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'trainingDays',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'trainingDays',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 }
@@ -809,6 +911,18 @@ extension PrimePlanQuerySortBy on QueryBuilder<PrimePlan, PrimePlan, QSortBy> {
   QueryBuilder<PrimePlan, PrimePlan, QAfterSortBy> sortByProteinGDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'proteinG', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PrimePlan, PrimePlan, QAfterSortBy> sortByStepTarget() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stepTarget', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PrimePlan, PrimePlan, QAfterSortBy> sortByStepTargetDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stepTarget', Sort.desc);
     });
   }
 
@@ -911,6 +1025,18 @@ extension PrimePlanQuerySortThenBy
     });
   }
 
+  QueryBuilder<PrimePlan, PrimePlan, QAfterSortBy> thenByStepTarget() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stepTarget', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PrimePlan, PrimePlan, QAfterSortBy> thenByStepTargetDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stepTarget', Sort.desc);
+    });
+  }
+
   QueryBuilder<PrimePlan, PrimePlan, QAfterSortBy> thenByTrainingDays() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'trainingDays', Sort.asc);
@@ -950,8 +1076,9 @@ extension PrimePlanQueryWhereDistinct
     });
   }
 
-  QueryBuilder<PrimePlan, PrimePlan, QDistinct> distinctByPlanName(
-      {bool caseSensitive = true}) {
+  QueryBuilder<PrimePlan, PrimePlan, QDistinct> distinctByPlanName({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'planName', caseSensitive: caseSensitive);
     });
@@ -960,6 +1087,12 @@ extension PrimePlanQueryWhereDistinct
   QueryBuilder<PrimePlan, PrimePlan, QDistinct> distinctByProteinG() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'proteinG');
+    });
+  }
+
+  QueryBuilder<PrimePlan, PrimePlan, QDistinct> distinctByStepTarget() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'stepTarget');
     });
   }
 
@@ -1011,6 +1144,12 @@ extension PrimePlanQueryProperty
   QueryBuilder<PrimePlan, int, QQueryOperations> proteinGProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'proteinG');
+    });
+  }
+
+  QueryBuilder<PrimePlan, int, QQueryOperations> stepTargetProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'stepTarget');
     });
   }
 

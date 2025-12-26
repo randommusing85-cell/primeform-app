@@ -28,7 +28,7 @@ class HomeScreen extends StatelessWidget {
               child: const Text('Create Plan'),
             ),
             const SizedBox(height: 12),
-            
+
             FilledButton.tonal(
               onPressed: () => Navigator.pushNamed(context, '/myplan'),
               child: const Text('My Plan'),
@@ -50,8 +50,9 @@ class HomeScreen extends StatelessWidget {
 
             FilledButton.tonal(
               onPressed: () async {
-                final callable =
-                    FirebaseFunctions.instance.httpsCallable('generatePlan');
+                final callable = FirebaseFunctions.instance.httpsCallable(
+                  'generatePlan',
+                );
 
                 final res = await callable.call({
                   "age": 40,
@@ -67,9 +68,9 @@ class HomeScreen extends StatelessWidget {
                 print(res.data);
 
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(res.data.toString())),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(res.data.toString())));
                 }
               },
               child: const Text('AI Plan Smoke Test'),

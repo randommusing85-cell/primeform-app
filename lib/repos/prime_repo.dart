@@ -3,7 +3,6 @@ import 'package:primeform_app/db/isar_db.dart';
 import 'package:primeform_app/models/checkin.dart';
 import 'package:primeform_app/models/prime_plan.dart';
 
-
 class PrimeRepo {
   Future<void> addCheckIn(CheckIn c) async {
     final isar = await IsarDb.instance();
@@ -14,11 +13,7 @@ class PrimeRepo {
 
   Future<List<CheckIn>> latestCheckIns({int limit = 30}) async {
     final isar = await IsarDb.instance();
-    return isar.checkIns
-        .where()
-        .sortByTsDesc()
-        .limit(limit)
-        .findAll();
+    return isar.checkIns.where().sortByTsDesc().limit(limit).findAll();
   }
 
   Stream<List<CheckIn>> watchLatestCheckIns({int limit = 30}) async* {

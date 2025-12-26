@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../state/providers.dart';
@@ -49,10 +49,7 @@ class TrendsScreen extends ConsumerWidget {
                     child: _TrendCard(
                       title: 'Weight',
                       value: '${avgWeight7.toStringAsFixed(1)} kg',
-                      trend: _trend(
-                        now: avgWeight7,
-                        prev: avgWeightPrev,
-                      ),
+                      trend: _trend(now: avgWeight7, prev: avgWeightPrev),
                       subtitle: _deltaText(
                         delta: dWeight,
                         unit: 'kg',
@@ -90,11 +87,7 @@ class TrendsScreen extends ConsumerWidget {
                   prev: avgStepsPrev,
                   higherIsBetter: true,
                 ),
-                subtitle: _deltaText(
-                  delta: dSteps,
-                  unit: '',
-                  decimals: 0,
-                ),
+                subtitle: _deltaText(delta: dSteps, unit: '', decimals: 0),
               ),
 
               const SizedBox(height: 24),
@@ -146,6 +139,30 @@ class TrendsScreen extends ConsumerWidget {
     return '${d.day.toString().padLeft(2, '0')}-'
         '${d.month.toString().padLeft(2, '0')}-'
         '${d.year}';
+  }
+
+  Map<String, dynamic> buildTrendPayload(List<CheckIn> items) {
+    final last14 = items.take(14).toList();
+    final last7 = last14.take(7).toList();
+    final prev7 = last14.skip(7).take(7).toList();
+
+    double avg(Iterable<double> xs) =>
+        xs.isEmpty ? 0 : xs.reduce((a, b) => a + b) / xs.length;
+
+    return {
+      "weight": {
+        "last7": avg(last7.map((c) => c.weightKg)),
+        "prev7": avg(prev7.map((c) => c.weightKg)),
+      },
+      "waist": {
+        "last7": avg(last7.map((c) => c.waistCm)),
+        "prev7": avg(prev7.map((c) => c.waistCm)),
+      },
+      "steps": {
+        "last7": avg(last7.map((c) => c.stepsToday.toDouble())),
+        "prev7": avg(prev7.map((c) => c.stepsToday.toDouble())),
+      },
+    };
   }
 
   static Trend _trend({

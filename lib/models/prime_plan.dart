@@ -15,4 +15,6 @@ class PrimePlan {
   late int proteinG;
   late int carbsG;
   late int fatG;
+
+  late int stepTarget;
 }

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/checkin.dart';
@@ -52,9 +52,9 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
       ref.invalidate(latestCheckInsStreamProvider);
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Check-in saved ✅')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Check-in saved ✅')));
 
       _weightCtrl.clear();
       _waistCtrl.clear();
@@ -62,9 +62,9 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
       _noteCtrl.clear();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Save failed: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Save failed: $e')));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -87,7 +87,9 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
 
               TextFormField(
                 controller: _weightCtrl,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 decoration: const InputDecoration(
                   labelText: 'Weight (kg)',
                   hintText: 'e.g. 75.2',
@@ -103,7 +105,9 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
 
               TextFormField(
                 controller: _waistCtrl,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 decoration: const InputDecoration(
                   labelText: 'Waist (cm)',
                   hintText: 'e.g. 80',
@@ -127,7 +131,8 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
                 validator: (v) {
                   final n = int.tryParse((v ?? '').trim());
                   if (n == null) return 'Enter a whole number';
-                  if (n < 0 || n > 100000) return 'Enter a realistic step count';
+                  if (n < 0 || n > 100000)
+                    return 'Enter a realistic step count';
                   return null;
                 },
               ),
