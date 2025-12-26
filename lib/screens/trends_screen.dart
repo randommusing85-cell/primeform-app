@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+ï»¿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:primeform_app/state/providers.dart';
 
@@ -26,8 +26,8 @@ class TrendsScreen extends ConsumerWidget {
             itemBuilder: (context, i) {
               final c = items[i];
               return ListTile(
-                title: Text('${c.weightKg.toStringAsFixed(1)} kg • ${c.waistCm.toStringAsFixed(1)} cm'),
-                subtitle: Text('${c.ts} • steps: ${c.stepsToday}${c.note == null ? "" : " • ${c.note}"}'),
+                title: Text('${c.weightKg.toStringAsFixed(1)} kg â€¢ ${c.waistCm.toStringAsFixed(1)} cm'),
+                subtitle: Text('${c.ts} â€¢ steps: ${c.stepsToday}${c.note == null ? "" : " â€¢ ${c.note}"}'),
               );
             },
           );

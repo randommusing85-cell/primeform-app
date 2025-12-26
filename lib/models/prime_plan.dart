@@ -8,6 +8,9 @@ class PrimePlan {
 
   late DateTime createdAt;
 
+  late String planName;
+  late int trainingDays;
+
   late int calories;
   late int proteinG;
   late int carbsG;

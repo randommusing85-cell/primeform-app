@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_core/firebase_core.dart';
 
+import 'firebase_options.dart';
 import 'screens/home_screen.dart';
 import 'screens/plan_screen.dart';
 import 'screens/checkin_screen.dart';
 import 'screens/trends_screen.dart';
+import 'screens/my_plan_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const ProviderScope(child: PrimeFormApp()));
 }
 
@@ -28,6 +37,7 @@ class PrimeFormApp extends StatelessWidget {
         '/plan': (context) => const PlanScreen(),
         '/checkin': (context) => const CheckInScreen(),
         '/trends': (context) => const TrendsScreen(),
+        '/myplan': (context) => const MyPlanScreen(),
       },
     );
   }

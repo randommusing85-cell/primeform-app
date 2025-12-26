@@ -1,7 +1,5 @@
-import 'package:flutter/material.dart';import 'package:flutter/material.dart';
-
-import 'package:primeform_app/repos/prime_repo.dart';
-import 'package:primeform_app/models/checkin.dart';
+import 'package:flutter/material.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -30,6 +28,12 @@ class HomeScreen extends StatelessWidget {
               child: const Text('Create Plan'),
             ),
             const SizedBox(height: 12),
+            
+            FilledButton.tonal(
+              onPressed: () => Navigator.pushNamed(context, '/myplan'),
+              child: const Text('My Plan'),
+            ),
+            const SizedBox(height: 12),
 
             FilledButton.tonal(
               onPressed: () => Navigator.pushNamed(context, '/checkin'),
@@ -43,7 +47,33 @@ class HomeScreen extends StatelessWidget {
             ),
 
             const Spacer(),
-            
+
+            FilledButton.tonal(
+              onPressed: () async {
+                final callable =
+                    FirebaseFunctions.instance.httpsCallable('generatePlan');
+
+                final res = await callable.call({
+                  "age": 40,
+                  "sex": "male",
+                  "heightCm": 175,
+                  "weightKg": 75.2,
+                  "goal": "cut",
+                  "daysPerWeek": 4,
+                  "equipment": "gym access",
+                });
+
+                // ignore: avoid_print
+                print(res.data);
+
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(res.data.toString())),
+                  );
+                }
+              },
+              child: const Text('AI Plan Smoke Test'),
+            ),
           ],
         ),
       ),

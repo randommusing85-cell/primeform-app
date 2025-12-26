@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+ï»¿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:primeform_app/models/checkin.dart';
@@ -140,7 +140,7 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
                 controller: _noteCtrl,
                 decoration: const InputDecoration(
                   labelText: 'Note (optional)',
-                  hintText: 'Sleep, stress, training, anything…',
+                  hintText: 'Sleep, stress, training, anythingâ€¦',
                 ),
                 maxLines: 3,
               ),
@@ -148,7 +148,7 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
 
               FilledButton(
                 onPressed: _saving ? null : _save,
-                child: Text(_saving ? 'Saving…' : 'Save Check-in'),
+                child: Text(_saving ? 'Savingâ€¦' : 'Save Check-in'),
               ),
             ],
           ),
