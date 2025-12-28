@@ -21,6 +21,7 @@ class _PlanScreenState extends ConsumerState<PlanScreen> {
   final _heightCtrl = TextEditingController(text: '175');
   final _weightCtrl = TextEditingController(text: '75.2');
 
+  String _sex = 'male'; // ✅ NEW
   String _goal = 'cut';
   int _daysPerWeek = 4;
   String _equipment = 'gym access';
@@ -51,7 +52,7 @@ class _PlanScreenState extends ConsumerState<PlanScreen> {
 
       final res = await callable.call({
         "age": int.parse(_ageCtrl.text.trim()),
-        "sex": "male",
+        "sex": _sex, // ✅ use selected value
         "heightCm": int.parse(_heightCtrl.text.trim()),
         "weightKg": double.parse(_weightCtrl.text.trim()),
         "goal": _goal,
@@ -107,9 +108,8 @@ class _PlanScreenState extends ConsumerState<PlanScreen> {
     ref.invalidate(activePlanProvider);
 
     if (!mounted) return;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Plan saved ✅')));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Plan saved ✅')));
   }
 
   @override
@@ -132,6 +132,18 @@ class _PlanScreenState extends ConsumerState<PlanScreen> {
               key: _formKey,
               child: Column(
                 children: [
+                  // ✅ NEW: Sex selection
+                  DropdownButtonFormField<String>(
+                    initialValue: _sex,
+                    decoration: const InputDecoration(labelText: 'Sex'),
+                    items: const [
+                      DropdownMenuItem(value: 'male', child: Text('Male')),
+                      DropdownMenuItem(value: 'female', child: Text('Female')),
+                    ],
+                    onChanged: (v) => setState(() => _sex = v ?? 'male'),
+                  ),
+                  const SizedBox(height: 12),
+
                   TextFormField(
                     controller: _ageCtrl,
                     keyboardType: TextInputType.number,

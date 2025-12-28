@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_functions/cloud_functions.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class HomeScreen extends StatelessWidget {
+import '../state/providers.dart';
+
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+
+    final workoutDocAsync = ref.watch(latestWorkoutTemplateProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('PrimeForm')),
@@ -23,6 +27,7 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
+            // PLAN
             FilledButton(
               onPressed: () => Navigator.pushNamed(context, '/plan'),
               child: const Text('Create Plan'),
@@ -35,6 +40,36 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
+            // WORKOUT
+            FilledButton(
+              onPressed: () => Navigator.pushNamed(context, '/workout'),
+              child: const Text('Create Workout Plan'),
+            ),
+            const SizedBox(height: 12),
+
+            FilledButton(
+              onPressed: () {
+                // Smart route:
+                // - If workout plan exists -> Today's Workout
+                // - Else -> Create Workout Plan
+                final doc = workoutDocAsync.value;
+                if (doc == null) {
+                  Navigator.pushNamed(context, '/workout');
+                } else {
+                  Navigator.pushNamed(context, '/today-workout');
+                }
+              },
+              child: const Text("Today's Workout"),
+            ),
+            const SizedBox(height: 12),
+
+            FilledButton.tonal(
+              onPressed: () => Navigator.pushNamed(context, '/my-workout'),
+              child: const Text('My Workout Plan'),
+            ),
+            const SizedBox(height: 12),
+
+            // TRACK
             FilledButton.tonal(
               onPressed: () => Navigator.pushNamed(context, '/checkin'),
               child: const Text('Daily Check-in'),
@@ -48,32 +83,25 @@ class HomeScreen extends StatelessWidget {
 
             const Spacer(),
 
-            FilledButton.tonal(
-              onPressed: () async {
-                final callable = FirebaseFunctions.instance.httpsCallable(
-                  'generatePlan',
-                );
-
-                final res = await callable.call({
-                  "age": 40,
-                  "sex": "male",
-                  "heightCm": 175,
-                  "weightKg": 75.2,
-                  "goal": "cut",
-                  "daysPerWeek": 4,
-                  "equipment": "gym access",
-                });
-
-                // ignore: avoid_print
-                print(res.data);
-
-                if (context.mounted) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text(res.data.toString())));
-                }
-              },
-              child: const Text('AI Plan Smoke Test'),
+            // Optional: small status hint (non-blocking)
+            workoutDocAsync.when(
+              data: (doc) => Text(
+                doc == null
+                    ? 'No workout plan saved yet.'
+                    : 'Workout plan ready: ${doc.planName}',
+                style: theme.textTheme.bodySmall,
+                textAlign: TextAlign.center,
+              ),
+              loading: () => Text(
+                'Loading...',
+                style: theme.textTheme.bodySmall,
+                textAlign: TextAlign.center,
+              ),
+              error: (e, _) => Text(
+                'Could not load workout plan.',
+                style: theme.textTheme.bodySmall,
+                textAlign: TextAlign.center,
+              ),
             ),
           ],
         ),
